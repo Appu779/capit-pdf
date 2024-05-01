@@ -13,7 +13,7 @@ bucket = storage.bucket(name='capit-reference')
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
-def on_request_example():
+def reference():
     # Check if the request contains a file
     if 'file' not in request.files:
         return "No file uploaded.", 400
