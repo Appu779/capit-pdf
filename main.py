@@ -1,29 +1,28 @@
-
-]from firebase_functions import https_fn
-from firebase_admin import initialize_app
-from firebase_admin import storage
-import fitz  # type: ignore # PyMuPDF
+from flask import Flask, request
+from firebase_admin import initialize_app, storage
+import fitz
 import tempfile
 import os
 
 # Initialize Firebase app
 initialize_app()
 
-# Initialize Firebase Cloud Storage
-bucket = storage.bucket()
+# Initialize Firebase Cloud Storage with your specific bucket name
+bucket = storage.bucket(name='capit-reference')
 
-@https_fn.on_request()
-def reference(req: https_fn.Request) -> https_fn.Response:
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def on_request_example():
     # Check if the request contains a file
-    if not req.files:
-        return https_fn.Response("No file uploaded.", status=400)
+    if 'file' not in request.files:
+        return "No file uploaded.", 400
 
-    # Get the uploaded file
-    uploaded_file = req.files.get("file")
+    uploaded_file = request.files['file']
 
     # Check if the uploaded file is a PDF
     if not uploaded_file.filename.endswith(".pdf"):
-        return https_fn.Response("Uploaded file is not a PDF.", status=400)
+        return "Uploaded file is not a PDF.", 400
 
     # Create a temporary file to store the uploaded PDF
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
@@ -62,5 +61,7 @@ def reference(req: https_fn.Request) -> https_fn.Response:
     # Delete the temporary PDF file
     os.remove(pdf_path)
 
-    return https_fn.Response("Images extracted from PDF and saved to Cloud Storage.")
+    return "Images extracted from PDF and saved to Cloud Storage."
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
