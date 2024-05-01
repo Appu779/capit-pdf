@@ -1,5 +1,5 @@
 
-from firebase_functions import https_fn
+]from firebase_functions import https_fn
 from firebase_admin import initialize_app
 from firebase_admin import storage
 import fitz  # type: ignore # PyMuPDF
@@ -13,7 +13,7 @@ initialize_app()
 bucket = storage.bucket()
 
 @https_fn.on_request()
-def on_request_example(req: https_fn.Request) -> https_fn.Response:
+def reference(req: https_fn.Request) -> https_fn.Response:
     # Check if the request contains a file
     if not req.files:
         return https_fn.Response("No file uploaded.", status=400)
